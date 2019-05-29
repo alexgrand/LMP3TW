@@ -1,17 +1,14 @@
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('square', type=int,
-                    help="display a square of a given number")
-parser.add_argument("-v", "--verbosity", help="increase output verbosity",
-                    action="count", default=0)
+parser.add_argument("x", type=int, help="the base")
+parser.add_argument("y", type=int, help="the exponent")
+parser.add_argument("-v", "--verbosity", action="count", default=0)
 args = parser.parse_args()
-answer = args.square**2
-
-# bugfix: replace == with >=
+answer = args.x**args.y
 if args.verbosity >= 2:
-    print("the square of {} equals {}".format(args.square, answer))
+    print("{} to the power {} equals {}".format(args.x, args.y, answer))
 elif args.verbosity >= 1:
-    print(f"{args.square}^2 == {answer}")
+    print("{}^{} == {}".format(args.x, args.y, answer))
 else:
     print(answer)
