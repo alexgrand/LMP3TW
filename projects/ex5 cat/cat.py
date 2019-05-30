@@ -2,24 +2,6 @@ import argparse
 import os.path
 from sys import exit
 
-cat_help = """
-            cat - concatenate files and print on the standard output
-            write [file_name] and check if it exists
-           """
-parser = argparse.ArgumentParser()
-parser.add_argument("cat", help=cat_help)
-parser.add_argument("-b", "--number-nonblank",
-                    action="store_true",
-                    help="number nonempty output lines, overrides -n")
-parser.add_argument("-A", "--show-all",
-                    help="equivalent to -vET",
-                    action="store_true")
-parser.add_argument("-e", help="equivalent to -vE", action="store_true")
-
-args = parser.parse_args()
-
-fl_name = args.cat
-
 
 def invalid(fl_name):
     print(f"cat: {fl_name}: No such file or directory!")
@@ -31,10 +13,6 @@ def file_exists(fl_name):
         return True
     else:
         return None
-
-if not file_exists(fl_name):
-    invalid(fl_name)
-    exit(1)
 
 
 def read_file():
@@ -62,7 +40,7 @@ def format_lines(content):
     return nw_content
 
 
-def cat_b(content):
+def number_nonblank(content):
     nw_content = []
     index = 0
     for line in content:
@@ -74,7 +52,7 @@ def cat_b(content):
     return nw_content
 
 
-def cat_A(content):
+def show_all(content):
     nw_content = []
     for line in content:
         if not line == '':
@@ -96,9 +74,9 @@ def cat_print(print_all=None, content=None):
 
 def cat_start():
     COMMANDS = {
-        'number_nonblank': cat_b,
-        'show_all': cat_A,
-        'e': cat_A
+        'number_nonblank': number_nonblank,
+        'show_all': show_all,
+        'e': show_all
     }
     no_commands = True
     content = format_lines(read_lines())
@@ -116,4 +94,33 @@ def cat_start():
     cat_print(no_commands, content)
 
 
+def parse_args():
+    """
+    returns args and name of the file if [file_name] is correct.
+    if [file_name] is incorrect stops the program and throws error.
+    """
+    cat_help = """
+                cat - concatenate files and print on the standard output
+                write [file_name] and check if it exists
+            """
+    parser = argparse.ArgumentParser()
+    parser.add_argument("cat", help=cat_help)
+    parser.add_argument("-b", "--number-nonblank",
+                        action="store_true",
+                        help="number nonempty output lines, overrides -n")
+    parser.add_argument("-A", "--show-all",
+                        help="equivalent to -vET",
+                        action="store_true")
+    parser.add_argument("-e", help="equivalent to -vE", action="store_true")
+
+    args = parser.parse_args()
+    fl_name = args.cat
+
+    if not file_exists(fl_name):
+        invalid(fl_name)
+        exit(1)
+
+    return args, fl_name
+
+args, fl_name = parse_args()
 cat_start()
