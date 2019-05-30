@@ -96,8 +96,7 @@ class Parser(object):
 
     def prnt(self):
         for line in self.content:
-            for ln in line:
-                print(ln)
+            print(line)
 
     def start(self):
         self.parse_args()
@@ -116,23 +115,20 @@ class Parser(object):
             print('cat: Error: You didn\'t write any correct input!')
             exit(0)
         elif len(self.files) == 1:
-            self.content.append(self.fl.read_lines(self.files[0]))
+            self.content = self.fl.read_lines(self.files[0])
         else:
             for fl_name in self.files:
-                self.content.append(self.fl.read_lines(fl_name))
+                self.content += self.fl.read_lines(fl_name)
 
     def number_nonblank(self):
         nw_content = []
+        index = 0
         for line in self.content:
-            index = 0
-            nw_line = []
-            for ln in line:
-                if not ln == '':
-                    index += 1
-                    nw_line.append(f"     {index}  {ln}")
-                else:
-                    nw_line.append(ln)
-            nw_content.append(nw_line)
+            if not line == '':
+                index += 1
+                nw_content.append(f"     {index}  {line}")
+            else:
+                nw_content.append(line)
 
         self.content = nw_content
         return self.content
@@ -140,12 +136,7 @@ class Parser(object):
     def show_all(self):
         nw_content = []
         for line in self.content:
-            nw_line = []
-            for ln in line:
-                nw_line.append(f"{ln}$")
-
-            nw_content.append(nw_line)
-
+            nw_content.append(f"{line}$")
         self.content = nw_content
         return self.content
 
