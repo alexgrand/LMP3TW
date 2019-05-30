@@ -70,6 +70,9 @@ class Parser(object):
         self.parser.add_argument("-b", "--number-nonblank",
                                  action="store_true",
                                  help="number nonempty output lines")
+        self.parser.add_argument("-A", "--show-all",
+                                 action="store_true",
+                                 help="equivalent to -vET")
 
         self.args = vars(self.parser.parse_args())
         return self.args
@@ -134,6 +137,17 @@ class Parser(object):
         self.content = nw_content
         return self.content
 
+    def show_all(self):
+        nw_content = []
+        for line in self.content:
+            nw_line = []
+            for ln in line:
+                nw_line.append(f"{ln}$")
+
+            nw_content.append(nw_line)
+
+        self.content = nw_content
+        return self.content
 
 parser = Parser()
 parser.start()
