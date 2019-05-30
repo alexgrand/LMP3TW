@@ -1,0 +1,5 @@
+This command will spit out the contents of somefile.txt. 
+That's not actually it's original purpose. Originally it was for combining
+more than one file--thus it was called cat.
+
+To do that simply add each file to cat
