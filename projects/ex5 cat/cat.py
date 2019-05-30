@@ -14,6 +14,7 @@ parser.add_argument("-b", "--number-nonblank",
 parser.add_argument("-A", "--show-all",
                     help="equivalent to -vET",
                     action="store_true")
+parser.add_argument("-e", help="equivalent to -vE", action="store_true")
 
 args = parser.parse_args()
 
@@ -84,25 +85,35 @@ def cat_A(content):
     return nw_content
 
 
-def cat_start():
-    COMMANDS = {
-        'number_nonblank': cat_b,
-        'show_all': cat_A
-    }
-    no_commands = True
-    content = format_lines(read_lines())
-
-    for cmd in COMMANDS:
-        is_active = getattr(args, cmd)
-        if is_active:
-            no_commands = False
-            content = COMMANDS.get(cmd)(content)
-
-    if no_commands:
+def cat_print(print_all=None, content=None):
+    if print_all:
         print(read_file())
+        return
     else:
         for line in content:
             print(line)
+
+
+def cat_start():
+    COMMANDS = {
+        'number_nonblank': cat_b,
+        'show_all': cat_A,
+        'e': cat_A
+    }
+    no_commands = True
+    content = format_lines(read_lines())
+    used_cmds = []
+
+    for cmd in COMMANDS:
+        cmd_is_active = getattr(args, cmd)
+        cmd_fn = COMMANDS.get(cmd)
+
+        if cmd_is_active and not used_cmds.__contains__(cmd_fn):
+            no_commands = False
+            content = cmd_fn(content)
+            used_cmds.append(cmd_fn)
+
+    cat_print(no_commands, content)
 
 
 cat_start()
