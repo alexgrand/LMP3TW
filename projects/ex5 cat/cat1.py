@@ -54,7 +54,7 @@ class File(object):
         return self.content
 
 
-class Parser(object):
+class Cat(object):
     def __init__(self):
         self.parser = argparse.ArgumentParser()
         self.args = ''
@@ -140,7 +140,8 @@ class Parser(object):
         self.content = nw_content
         return self.content
 
-parser = Parser()
+
+parser = Cat()
 parser.start()
 
 # print('\n')
