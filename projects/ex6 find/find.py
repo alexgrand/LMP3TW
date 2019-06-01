@@ -14,7 +14,7 @@ class Find(object):
     def start(self):
         self.parse_args()
         self.sort_args()
-        self.check_path()
+        self.cmds_start()
 
     def parse_args(self):
         self.parser.add_argument(
@@ -32,13 +32,25 @@ class Find(object):
                 self.path = self.args.get(cmd)
         return self.cmds, self.path
 
-    def check_path(self):
+    def path_exists(self):
         self.path_obj = Path(self.path)
         if not self.path_obj.exists():
             print(f"find: ‘{self.path}’: No such file or directory")
             exit(1)
+        else:
+            return True
+
+    def cmds_start(self):
+        for cmd in self.cmds:
+            fn = getattr(self, cmd)
+            fn()
+
+    def find(self):
+        self.path_exists()
+        print(self.path)
+        return self.path
 
 finder = Find()
 finder.start()
-print(finder.args)
-print(finder.cmds, finder.path)
+# print(finder.args)
+# print(finder.cmds, finder.path)
