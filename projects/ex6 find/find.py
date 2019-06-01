@@ -32,7 +32,6 @@ class Find(object):
                 Base of file name (the path with the leading directories
                 removed) matches shell pattern
             """,
-            action="store_true"
         )
 
         self.args = vars(self.parser.parse_args())
@@ -54,16 +53,15 @@ class Find(object):
             return True
 
     def cmds_start(self):
-        args = dict(self.args)
-        args.pop('find')
-        cmd_is_active = list(args.values()).__contains__(True)
+        self.args.pop('find')
+        no_commands = True
+        for cmd in self.args:
+            if self.args[cmd]:
+                no_commands = False
+                fn = getattr(self, cmd)
+                fn()
 
-        if cmd_is_active:
-            for cmd in args:
-                if args[cmd]:
-                    fn = getattr(self, cmd)
-                    fn()
-        else:
+        if no_commands:
             self.find()
 
     def find(self):
@@ -72,13 +70,15 @@ class Find(object):
         return self.path
 
     def name(self):
-        self.paths = list(Path('.').glob(self.path))
+        self.path_exists()
+        self.paths = list(Path(self.path).glob(f"**/{self.args['name']}"))
 
         if not self.paths:
-            self.invalid()
+            print(f"find: unknown pattern `{self.args['name']}`")
+            exit(0)
         else:
             for path in self.paths:
-                print(f"./{path}")
+                print(path)
 
 
 finder = Find()
