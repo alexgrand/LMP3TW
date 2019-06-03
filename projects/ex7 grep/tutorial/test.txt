@@ -1,8 +1,9 @@
 Hi 
 this 
 is test file 
+for testing
 to carry out few regular expressions 
 practical with grep 
 123 456 
-Abcd
+Abcd abc
 ABCD
