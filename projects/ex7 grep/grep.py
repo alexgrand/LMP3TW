@@ -81,7 +81,12 @@ class Grep(object):
 
     def parse_str(self, string):
         pattern = r"{}".format(self.pattern)
-        result = re.search(pattern, string)
+        if self.cmds.__contains__('ignore_case'):
+            pattern_obj = re.compile(pattern, re.I)
+        else:
+            pattern_obj = re.compile(pattern)
+
+        result = pattern_obj.search(string)
 
         if result:
             result = result.group()
