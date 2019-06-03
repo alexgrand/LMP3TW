@@ -41,6 +41,19 @@ class Grep(object):
             help="ignore case distinctions",
             action="store_true"
         )
+        self.parser.add_argument(
+            "-w", "--word-regexp",
+            help="""
+            Select only those lines containing matches that form whole words.
+            The test is that the matching substring must either be at the
+            beginning of the line, or preceded by  a  non-word  constituent
+            character.   Similarly,  it must be either at the end of the line
+            or followed by a non-word constituent character.  Word-constituent
+            characters are letters, digits, and the underscore.
+            This option has no effect if -x is also specified.
+            """,
+            action="store_true"
+        )
 
         self.args = vars(self.parser.parse_args())
         self.path = self.args.get('file')
@@ -79,22 +92,25 @@ class Grep(object):
 
     def get_pattern_obj(self):
         pattern = r"{}".format(self.pattern)
+
+        if not self.cmds:
+            self.pattern_obj = re.compile(pattern)
+            return
+
         if self.cmds.__contains__('ignore_case'):
             self.pattern_obj = re.compile(pattern, re.I)
-        else:
-            self.pattern_obj = re.compile(pattern)
 
     def parse_strings(self):
         for string in self.strings:
             self.parse_str(string)
 
     def parse_str(self, string):
-        result = self.pattern_obj.search(string)
+        results = self.pattern_obj.findall(string)
 
-        if result:
-            result = result.group()
-            colored_result = COLOR_WARNING + COLOR_BOLD + result + COLOR_END
-            string = string.replace(result, colored_result)
+        if results:
+            for result in results:
+                colored_result = COLOR_WARNING + COLOR_BOLD + result + COLOR_END
+                string = string.replace(result, colored_result)
             print(string, end="")
 
 grep = Grep()
