@@ -97,6 +97,10 @@ class Grep(object):
             self.pattern_obj = re.compile(pattern)
             return
 
+        if self.cmds.__contains__('word_regexp'):
+            pattern = r"{}\b".format(self.pattern)
+            self.pattern_obj = re.compile(pattern)
+
         if self.cmds.__contains__('ignore_case'):
             self.pattern_obj = re.compile(pattern, re.I)
 
