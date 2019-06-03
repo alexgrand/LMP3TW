@@ -11,6 +11,7 @@ COLOR_END = "\033[0m"
 class Grep(object):
     def __init__(self):
         self.pattern = ''
+        self.pattern_obj = re.compile(self.pattern)
         self.strings = []
         self.results = []
         self.parser = argparse.ArgumentParser()
@@ -23,6 +24,7 @@ class Grep(object):
         self.check_path()
         self.get_strings()
         self.has_active_cmds()
+        self.get_pattern_obj()
         self.parse_strings()
 
     def parse_args(self):
@@ -75,18 +77,19 @@ class Grep(object):
         else:
             self.cmds = [cmd for cmd in args.keys() if args[cmd]]
 
+    def get_pattern_obj(self):
+        pattern = r"{}".format(self.pattern)
+        if self.cmds.__contains__('ignore_case'):
+            self.pattern_obj = re.compile(pattern, re.I)
+        else:
+            self.pattern_obj = re.compile(pattern)
+
     def parse_strings(self):
         for string in self.strings:
             self.parse_str(string)
 
     def parse_str(self, string):
-        pattern = r"{}".format(self.pattern)
-        if self.cmds.__contains__('ignore_case'):
-            pattern_obj = re.compile(pattern, re.I)
-        else:
-            pattern_obj = re.compile(pattern)
-
-        result = pattern_obj.search(string)
+        result = self.pattern_obj.search(string)
 
         if result:
             result = result.group()
