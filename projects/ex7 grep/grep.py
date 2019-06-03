@@ -3,6 +3,10 @@ import re
 from pathlib import Path
 from sys import exit
 
+COLOR_WARNING = "\033[31m"
+COLOR_BOLD = "\033[1m"
+COLOR_END = "\033[0m"
+
 
 class Grep(object):
     def __init__(self):
@@ -18,12 +22,11 @@ class Grep(object):
         self.check_path()
         self.get_strings()
         self.parse_strings()
-        self.prnt()
 
     def parse_args(self):
         self.parser.add_argument(
-            "regex",
-            help="grep  searches for PATTERN in each FILE"
+            "pattern",
+            help="searches for PATTERN in each FILE"
         )
         self.parser.add_argument(
             "file",
@@ -31,6 +34,8 @@ class Grep(object):
         )
 
         self.args = vars(self.parser.parse_args())
+        self.path = self.args.get('file')
+        self.pattern = self.args.get('pattern')
 
     def check_path(self):
         fl_path = self.args.get('file')
@@ -57,11 +62,14 @@ class Grep(object):
             self.parse_str(string)
 
     def parse_str(self, string):
-        print(string, end="")
+        pattern = r"{}".format(self.pattern)
+        result = re.search(pattern, string)
 
-    def prnt(self):
-        for result in self.results:
-            print(result, end="")
+        if result:
+            result = result.group()
+            colored_result = COLOR_WARNING + COLOR_BOLD + result + COLOR_END
+            string = string.replace(result, colored_result)
+            print(string, end="")
 
 grep = Grep()
 grep.start()
